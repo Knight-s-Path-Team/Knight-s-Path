@@ -5,22 +5,61 @@ import 'models/position.dart';
 import 'validators/move_validator.dart';
 import 'algorithms/threatened_squares.dart';
 
+/// ========================================
+/// GAME ENGINE - OYUN MOTORU
+/// ========================================
+/// 🎮 ANA KONTROL MERKEZİ - HER ŞEYİ YÖNETİR! 🎮
+/// 
+/// BU SINIF NE YAPAR:
+/// Tüm parçaları birleştirir ve oyunu yönetir (orkestra şefi gibi)
+/// 
+/// SORUMLULUKLAR:
+/// 1. Oyun durumunu yönetir (başladı mı, kazandı mı, kaybetti mi)
+/// 2. At'ın pozisyonunu takip eder
+/// 3. Hedef pozisyonu bilir
+/// 4. Hamle yapılmasını kontrol eder
+/// 5. Undo/Redo işlemlerini yönetir
+/// 6. Tehdit hesaplamalarını yapar
+/// 7. Geçerli hamleleri listeler
+/// 8. Minimum hamle hesabı yapar (BFS algoritması)
+/// 
+/// UI (Person B) BU SINIFI KULLANACAK:
+/// engine = GameEngine()
+/// engine.initializeLevel(levelData)  // Oyunu başlat
+/// engine.makeMove(position)          // Hamle yap
+/// engine.getValidMoves()             // Gidebileceğin yerler
+/// engine.undoMove()                  // Geri al
+/// engine.gameState                   // Kazandın mı?
+/// ========================================
+
 /// Oyun durumu
 enum GameState {
   playing,      // Oyun devam ediyor
-  won,          // Oyuncu kazandı (hedefe ulaştı)
-  lost,         // Oyuncu kaybetti (hareket edemiyor)
-  notStarted,   // Oyun başlamadı
+  won,          // Oyuncu kazandı (hedefe ulaştı) 🎉
+  lost,         // Oyuncu kaybetti (hareket edemiyor) 😢
+  notStarted,   // Oyun henüz başlamadı
 }
 
-/// Level verisi
+/// Level verisi - UI/Data ekibi level tasarlarken bunu kullanacak
+/// 
+/// ÖRNEK LEVEL:
+/// LevelData(
+///   boardSize: 8,
+///   levelNumber: 1,
+///   knightStartPosition: Position.fromChessNotation('b1'),  // At b1'de başlar
+///   targetPosition: Position.fromChessNotation('h8'),       // Hedef h8
+///   enemyPieces: {
+///     Position.fromChessNotation('d4'): ChessPiece(PieceType.rook, PieceColor.black),
+///   },  // d4'te kale var
+///   description: 'Kale Tuzağı',
+/// )
 class LevelData {
-  final int boardSize;
-  final Position knightStartPosition;
-  final Position targetPosition;
-  final Map<Position, ChessPiece> enemyPieces;
-  final int levelNumber;
-  final String? description;
+  final int boardSize;                          // Tahta boyutu (8x8)
+  final Position knightStartPosition;           // At nerede başlar
+  final Position targetPosition;                // Hedefe nerede ulaşmalısın
+  final Map<Position, ChessPiece> enemyPieces;  // Düşman taşlar nerede
+  final int levelNumber;                        // Level numarası
+  final String? description;                    // Level açıklaması (opsiyonel)
 
   const LevelData({
     required this.boardSize,
@@ -33,11 +72,11 @@ class LevelData {
 }
 
 /// Knight's Path oyun motoru
-/// Tüm oyun mantığını yöneten ana sınıf
+/// Tüm oyun mantığını yöneten ana sınıf - UI buradan komut alır
 class GameEngine {
-  late ChessBoard _board;
-  late Position _knightPosition;
-  late Position _targetPosition;
+  late ChessBoard _board;            // Satranç tahtası
+  late Position _knightPosition;     // At'ın şu anki pozisyonu
+  late Position _targetPosition;     // Hedef pozisyon
   GameState _gameState = GameState.notStarted;
   int _moveCount = 0;
   final List<Position> _moveHistory = [];
@@ -94,7 +133,7 @@ class GameEngine {
     // Hareketi yap
     final knight = _board.getPieceAt(_knightPosition);
     _board.setPieceAt(_knightPosition, null); // Eski pozisyonu temizle
-    _board.setPieceAt(to, knight);             // Yeni pozisyona taşı
+    _board.setPieceAt(to, knight); // Yeni pozisyona taşı
 
     _moveHistory.add(_knightPosition);
     _knightPosition = to;
@@ -114,10 +153,10 @@ class GameEngine {
 
     final previousPosition = _moveHistory.removeLast();
     final knight = _board.getPieceAt(_knightPosition);
-    
+
     _board.setPieceAt(_knightPosition, null);
     _board.setPieceAt(previousPosition, knight);
-    
+
     _knightPosition = previousPosition;
     _moveCount--;
 
@@ -205,7 +244,7 @@ class GameEngine {
     }
 
     final queue = <({Position pos, int moves})>[
-      (pos: _knightPosition, moves: 0)
+      (pos: _knightPosition, moves: 0),
     ];
     final visited = <Position>{_knightPosition};
 

@@ -64,7 +64,7 @@ void main() {
       expect(threatened.contains(Position(4, 7)), true);
       expect(threatened.contains(Position(0, 4)), true);
       expect(threatened.contains(Position(7, 4)), true);
-      
+
       // Çapraz tehdit yok
       expect(threatened.contains(Position(5, 5)), false);
     });
@@ -111,7 +111,7 @@ void main() {
       expect(threatened.contains(Position(2, 2)), true);
       expect(threatened.contains(Position(5, 5)), true);
       expect(threatened.contains(Position(6, 6)), true);
-      
+
       // Düz çizgi tehdit yok
       expect(threatened.contains(Position(4, 5)), false);
       expect(threatened.contains(Position(5, 4)), false);
@@ -157,7 +157,7 @@ void main() {
       // Sadece çapraz kareler tehdit altında
       expect(threatened.contains(Position(5, 3)), true);
       expect(threatened.contains(Position(5, 5)), true);
-      
+
       // İleri kare tehdit altında değil
       expect(threatened.contains(Position(5, 4)), false);
     });
@@ -233,13 +233,13 @@ void main() {
 
     test('getSafeKnightMoves filters threatened squares', () {
       final board = ChessBoard();
-      
+
       // Beyaz knight
       board.setPieceAt(
         Position(4, 4),
         ChessPiece(PieceType.knight, PieceColor.white),
       );
-      
+
       // Siyah rook (2,0) konumunda - 2. satır ve 0. sütunu tehdit eder
       board.setPieceAt(
         Position(2, 0),
@@ -255,18 +255,24 @@ void main() {
       // Knight (4,4)'den 8 hareket var
       // (2,3), (2,5) -> 2. satırda, rook tarafından tehdit altında
       // (3,2), (5,2), (6,3) gibi karelerde 0. sütunda değil
-      
-      expect(safeMoves.contains(Position(2, 3)), false); // 2. satırda, tehdit altında
-      expect(safeMoves.contains(Position(2, 5)), false); // 2. satırda, tehdit altında
-      expect(safeMoves.contains(Position(6, 3)), true);  // Güvenli
-      expect(safeMoves.contains(Position(6, 5)), true);  // Güvenli
+
+      expect(
+        safeMoves.contains(Position(2, 3)),
+        false,
+      ); // 2. satırda, tehdit altında
+      expect(
+        safeMoves.contains(Position(2, 5)),
+        false,
+      ); // 2. satırda, tehdit altında
+      expect(safeMoves.contains(Position(6, 3)), true); // Güvenli
+      expect(safeMoves.contains(Position(6, 5)), true); // Güvenli
     });
   });
 
   group('ThreatenedSquares - Complex Scenarios', () {
     test('Multiple pieces create complex threat pattern', () {
       final board = ChessBoard();
-      
+
       // Siyah taşlar
       board.setPieceAt(
         Position(0, 0),
@@ -300,13 +306,13 @@ void main() {
 
     test('Realistic game scenario', () {
       final board = ChessBoard();
-      
+
       // Fotoğraftaki gibi bir senaryo: At c7'de, hedef a8
       board.setPieceAt(
         Position.fromChessNotation('c7'),
         ChessPiece(PieceType.knight, PieceColor.white),
       );
-      
+
       // Siyah vezir b8'de (a8'i tehdit ediyor)
       board.setPieceAt(
         Position.fromChessNotation('b8'),

@@ -218,7 +218,7 @@ void main() {
       engine.initializeLevel(levelData);
 
       final threatened = engine.getThreatenedSquares();
-      
+
       // Rook threatens entire row and column
       expect(threatened.contains(Position(4, 0)), true);
       expect(threatened.contains(Position(0, 4)), true);

@@ -3,16 +3,54 @@ import '../models/piece.dart';
 import '../models/position.dart';
 import '../models/move_calculator.dart';
 
+/// ========================================
+/// THREATENED SQUARES - TEHDİT HESAPLAMA ALGORİTMASI
+/// ========================================
+/// 🔥 EN KRİTİK DOSYA - OYUNUN ANA MEKANİZMASI! 🔥
+/// 
+/// BU ALGORİTMA NE YAPAR:
+/// Rakip taşların kontrol ettiği (tehdit ettiği) kareleri hesaplar
+/// 
+/// NEDEN ÖNEMLİ:
+/// Knight's Path oyununda sen SADECE güvenli karelere gidebilirsin!
+/// Rakip taşın vurduğu karelere GİREMEZSİN!
+/// 
+/// NASIL ÇALIŞIR:
+/// 1. Tahtadaki tüm düşman taşları bul (örn: siyah taşlar)
+/// 2. Her düşman taş için:
+///    - Kale ise: yatay/dikey çizgileri tehdit eder
+///    - Fil ise: çapraz çizgileri tehdit eder
+///    - Vezir ise: her yönü tehdit eder
+///    - At ise: L-şekli kareleri tehdit eder
+///    - Piyon ise: SADECE çapraz kareleri tehdit eder (ileri değil!)
+/// 3. Tüm tehdit edilen kareleri topla
+/// 4. Sen bu karelere GİDEMEZSİN! ❌
+/// 
+/// ÖRNEK:
+/// Tahtada c2'de kale var (♜)
+/// -> Kale tüm c sütununu tehdit eder (c1, c2, c3...c8) ❌
+/// -> Kale tüm 2. satırı tehdit eder (a2, b2, c2...h2) ❌
+/// -> Sen bu karelere gidemezsin!
+/// 
+/// KULLANIM:
+/// threatenedSquares = ThreatenedSquaresCalculator
+///   .calculateThreatenedSquares(board, PieceColor.black)
+/// // Set<Position> {a3, b4, c5...}  // Tehlikeli kareler
+/// 
+/// isSquareThreatened(position)  // Bu kareye gidebilir miyim?
+/// getSafeKnightMoves(position)  // At'ın güvenli hamleleri
+/// ========================================
+
 /// Tehdit altındaki kareleri hesaplayan ana algoritma sınıfı
 /// Bu, Knight's Path oyununun en kritik bileşenidir!
 class ThreatenedSquaresCalculator {
   /// Belirli bir rengin kontrol ettiği tüm kareleri hesaplar
-  /// 
+  ///
   /// Bu algoritma:
   /// 1. Tahtadaki belirli renkteki tüm taşları bulur
   /// 2. Her taş için geçerli hareket edebileceği kareleri hesaplar
   /// 3. Bu kareleri "tehdit altında" olarak işaretler
-  /// 
+  ///
   /// [board]: Satranç tahtası
   /// [threateningColor]: Tehdit eden taşların rengi (örn: siyah taşlar)
   /// Returns: Tehdit altındaki pozisyonların Set'i
@@ -31,11 +69,7 @@ class ThreatenedSquaresCalculator {
       final piece = entry.value;
 
       // Bu taşın hareket edebileceği tüm kareleri al
-      final attackedSquares = _getAttackedSquares(
-        piecePosition,
-        piece,
-        board,
-      );
+      final attackedSquares = _getAttackedSquares(piecePosition, piece, board);
 
       // Bu kareleri tehdit altında olarak ekle
       threatenedSquares.addAll(attackedSquares);
@@ -45,7 +79,7 @@ class ThreatenedSquaresCalculator {
   }
 
   /// Belirli bir taşın saldırabileceği kareleri hesaplar
-  /// 
+  ///
   /// Pawn (Piyon) için özel durum: Piyon sadece çapraz saldırır!
   /// Diğer taşlar için normal hareket kareleri = saldırı kareleri
   static Set<Position> _getAttackedSquares(
@@ -120,9 +154,14 @@ class ThreatenedSquaresCalculator {
   static Set<Position> _getKingAttackSquares(Position from, int boardSize) {
     final attacks = <Position>{};
     final directions = [
-      [-1, -1], [-1, 0], [-1, 1],
-      [0, -1],           [0, 1],
-      [1, -1],  [1, 0],  [1, 1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+      [0, -1],
+      [0, 1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
     ];
 
     for (final dir in directions) {
@@ -140,9 +179,9 @@ class ThreatenedSquaresCalculator {
     final attacks = <Position>{};
     final directions = [
       [-1, 0], // yukarı
-      [1, 0],  // aşağı
+      [1, 0], // aşağı
       [0, -1], // sol
-      [0, 1],  // sağ
+      [0, 1], // sağ
     ];
 
     for (final dir in directions) {
@@ -174,9 +213,9 @@ class ThreatenedSquaresCalculator {
     final attacks = <Position>{};
     final directions = [
       [-1, -1], // sol üst
-      [-1, 1],  // sağ üst
-      [1, -1],  // sol alt
-      [1, 1],   // sağ alt
+      [-1, 1], // sağ üst
+      [1, -1], // sol alt
+      [1, 1], // sağ alt
     ];
 
     for (final dir in directions) {
@@ -201,7 +240,7 @@ class ThreatenedSquaresCalculator {
   }
 
   /// Bir pozisyonun tehdit altında olup olmadığını kontrol eder
-  /// 
+  ///
   /// [position]: Kontrol edilecek pozisyon
   /// [board]: Satranç tahtası
   /// [threateningColor]: Tehdit eden taşların rengi
@@ -210,16 +249,19 @@ class ThreatenedSquaresCalculator {
     ChessBoard board,
     PieceColor threateningColor,
   ) {
-    final threatenedSquares = calculateThreatenedSquares(board, threateningColor);
+    final threatenedSquares = calculateThreatenedSquares(
+      board,
+      threateningColor,
+    );
     return threatenedSquares.contains(position);
   }
 
   /// Knight için güvenli hareketleri hesaplar (tehdit altında olmayan)
-  /// 
+  ///
   /// Bu, Knight's Path oyununda kritik fonksiyon:
   /// - Knight'ın hareket edebileceği tüm L-şeklindeki kareleri bulur
   /// - Bunlardan tehdit altında olmayanları filtreler
-  /// 
+  ///
   /// [knightPosition]: Knight'ın mevcut pozisyonu
   /// [board]: Satranç tahtası
   /// [enemyColor]: Düşman taşların rengi
@@ -244,7 +286,7 @@ class ThreatenedSquaresCalculator {
   }
 
   /// Belirli bir hareketin güvenli olup olmadığını kontrol eder
-  /// 
+  ///
   /// [from]: Başlangıç pozisyonu
   /// [to]: Hedef pozisyon
   /// [board]: Satranç tahtası

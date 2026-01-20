@@ -10,20 +10,18 @@ class ValidationResult {
   final String? errorMessage;
 
   const ValidationResult.valid() : isValid = true, errorMessage = null;
-  
+
   const ValidationResult.invalid(this.errorMessage) : isValid = false;
 
   @override
-  String toString() => isValid 
-      ? 'Valid move' 
-      : 'Invalid move: $errorMessage';
+  String toString() => isValid ? 'Valid move' : 'Invalid move: $errorMessage';
 }
 
 /// Satranç hamleleri için doğrulama sınıfı
 /// Knight's Path oyunu için özel kurallar içerir
 class MoveValidator {
   /// Bir hamlenin geçerli olup olmadığını kontrol eder
-  /// 
+  ///
   /// Knight's Path kuralları:
   /// 1. Taş Knight olmalı
   /// 2. Hareket L-şeklinde olmalı
@@ -44,7 +42,9 @@ class MoveValidator {
 
     // Knight kontrolü (Knight's Path için)
     if (piece.type != PieceType.knight) {
-      return const ValidationResult.invalid('Sadece Knight (At) hareket edebilir');
+      return const ValidationResult.invalid(
+        'Sadece Knight (At) hareket edebilir',
+      );
     }
 
     // Hedef kare geçerli mi?
@@ -61,7 +61,7 @@ class MoveValidator {
     // L-şeklinde hareket kontrolü
     if (!_isValidKnightMove(from, to)) {
       return const ValidationResult.invalid(
-        'Knight sadece L-şeklinde hareket edebilir (2+1 kare)'
+        'Knight sadece L-şeklinde hareket edebilir (2+1 kare)',
       );
     }
 
@@ -75,7 +75,7 @@ class MoveValidator {
 
       if (isThreatened) {
         return const ValidationResult.invalid(
-          'Bu kare düşman taşlar tarafından tehdit altında! Buraya gidemezsiniz.'
+          'Bu kare düşman taşlar tarafından tehdit altında! Buraya gidemezsiniz.',
         );
       }
     }
@@ -137,11 +137,7 @@ class MoveValidator {
     ChessBoard board,
     PieceColor enemyColor,
   ) {
-    final validMoves = getValidMoves(
-      knightPosition,
-      board,
-      enemyColor,
-    );
+    final validMoves = getValidMoves(knightPosition, board, enemyColor);
 
     return validMoves.isNotEmpty;
   }
@@ -153,11 +149,7 @@ class MoveValidator {
     ChessBoard board,
     PieceColor enemyColor,
   ) {
-    final validMoves = getValidMoves(
-      knightPosition,
-      board,
-      enemyColor,
-    );
+    final validMoves = getValidMoves(knightPosition, board, enemyColor);
 
     return validMoves.contains(targetPosition);
   }

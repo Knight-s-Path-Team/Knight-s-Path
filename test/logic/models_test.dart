@@ -34,14 +34,8 @@ void main() {
 
   group('ChessPiece Tests', () {
     test('Piece symbols', () {
-      expect(
-        ChessPiece(PieceType.knight, PieceColor.white).symbol,
-        '♘',
-      );
-      expect(
-        ChessPiece(PieceType.knight, PieceColor.black).symbol,
-        '♞',
-      );
+      expect(ChessPiece(PieceType.knight, PieceColor.white).symbol, '♘');
+      expect(ChessPiece(PieceType.knight, PieceColor.black).symbol, '♞');
     });
 
     test('Piece equality', () {
@@ -171,7 +165,7 @@ void main() {
       );
 
       final moves = MoveCalculator.getRookMoves(Position(4, 4), board);
-      
+
       // Sağa sadece 1 kare gidebilir (kendi taşı var)
       expect(moves.contains(Position(4, 5)), true);
       expect(moves.contains(Position(4, 6)), false);
@@ -190,7 +184,7 @@ void main() {
       );
 
       final moves = MoveCalculator.getRookMoves(Position(4, 4), board);
-      
+
       // Rakip taşı yiyebilir
       expect(moves.contains(Position(4, 6)), true);
       expect(moves.contains(Position(4, 7)), false); // Ama geçemez
@@ -249,7 +243,7 @@ void main() {
       );
 
       final moves = MoveCalculator.getPawnMoves(Position(6, 4), board);
-      
+
       // İleri + çapraz alma
       expect(moves.contains(Position(5, 4)), true); // İleri
       expect(moves.contains(Position(5, 3)), true); // Çapraz alma

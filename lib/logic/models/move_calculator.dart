@@ -10,13 +10,13 @@ class MoveCalculator {
     // L-şeklindeki 8 olası hareket
     final List<List<int>> knightOffsets = [
       [-2, -1], // 2 yukarı, 1 sol
-      [-2, 1],  // 2 yukarı, 1 sağ
+      [-2, 1], // 2 yukarı, 1 sağ
       [-1, -2], // 1 yukarı, 2 sol
-      [-1, 2],  // 1 yukarı, 2 sağ
-      [1, -2],  // 1 aşağı, 2 sol
-      [1, 2],   // 1 aşağı, 2 sağ
-      [2, -1],  // 2 aşağı, 1 sol
-      [2, 1],   // 2 aşağı, 1 sağ
+      [-1, 2], // 1 yukarı, 2 sağ
+      [1, -2], // 1 aşağı, 2 sol
+      [1, 2], // 1 aşağı, 2 sağ
+      [2, -1], // 2 aşağı, 1 sol
+      [2, 1], // 2 aşağı, 1 sağ
     ];
 
     final possibleMoves = <Position>[];
@@ -32,10 +32,7 @@ class MoveCalculator {
   }
 
   /// Rook (Kale) için geçerli hareketleri döndürür (yatay ve dikey)
-  static List<Position> getRookMoves(
-    Position from,
-    ChessBoard board,
-  ) {
+  static List<Position> getRookMoves(Position from, ChessBoard board) {
     final moves = <Position>[];
     final piece = board.getPieceAt(from);
     if (piece == null) return moves;
@@ -43,9 +40,9 @@ class MoveCalculator {
     // Dört yön: yukarı, aşağı, sol, sağ
     final directions = [
       [-1, 0], // yukarı
-      [1, 0],  // aşağı
+      [1, 0], // aşağı
       [0, -1], // sol
-      [0, 1],  // sağ
+      [0, 1], // sağ
     ];
 
     for (final dir in directions) {
@@ -75,10 +72,7 @@ class MoveCalculator {
   }
 
   /// Bishop (Fil) için geçerli hareketleri döndürür (çapraz)
-  static List<Position> getBishopMoves(
-    Position from,
-    ChessBoard board,
-  ) {
+  static List<Position> getBishopMoves(Position from, ChessBoard board) {
     final moves = <Position>[];
     final piece = board.getPieceAt(from);
     if (piece == null) return moves;
@@ -86,9 +80,9 @@ class MoveCalculator {
     // Dört çapraz yön
     final directions = [
       [-1, -1], // sol üst
-      [-1, 1],  // sağ üst
-      [1, -1],  // sol alt
-      [1, 1],   // sağ alt
+      [-1, 1], // sağ üst
+      [1, -1], // sol alt
+      [1, 1], // sağ alt
     ];
 
     for (final dir in directions) {
@@ -118,30 +112,26 @@ class MoveCalculator {
   }
 
   /// Queen (Vezir) için geçerli hareketleri döndürür (rook + bishop)
-  static List<Position> getQueenMoves(
-    Position from,
-    ChessBoard board,
-  ) {
-    return [
-      ...getRookMoves(from, board),
-      ...getBishopMoves(from, board),
-    ];
+  static List<Position> getQueenMoves(Position from, ChessBoard board) {
+    return [...getRookMoves(from, board), ...getBishopMoves(from, board)];
   }
 
   /// King (Şah) için geçerli hareketleri döndürür (her yöne 1 kare)
-  static List<Position> getKingMoves(
-    Position from,
-    ChessBoard board,
-  ) {
+  static List<Position> getKingMoves(Position from, ChessBoard board) {
     final moves = <Position>[];
     final piece = board.getPieceAt(from);
     if (piece == null) return moves;
 
     // 8 yön
     final directions = [
-      [-1, -1], [-1, 0], [-1, 1],
-      [0, -1],           [0, 1],
-      [1, -1],  [1, 0],  [1, 1],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+      [0, -1],
+      [0, 1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
     ];
 
     for (final dir in directions) {
@@ -158,10 +148,7 @@ class MoveCalculator {
   }
 
   /// Pawn (Piyon) için geçerli hareketleri döndürür
-  static List<Position> getPawnMoves(
-    Position from,
-    ChessBoard board,
-  ) {
+  static List<Position> getPawnMoves(Position from, ChessBoard board) {
     final moves = <Position>[];
     final piece = board.getPieceAt(from);
     if (piece == null) return moves;
@@ -198,10 +185,7 @@ class MoveCalculator {
   }
 
   /// Herhangi bir taş için geçerli hareketleri hesaplar
-  static List<Position> getPossibleMoves(
-    Position from,
-    ChessBoard board,
-  ) {
+  static List<Position> getPossibleMoves(Position from, ChessBoard board) {
     final piece = board.getPieceAt(from);
     if (piece == null) return [];
 
