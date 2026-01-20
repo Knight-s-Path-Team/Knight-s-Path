@@ -1,0 +1,29 @@
+{
+    "oyun_adi": "Last Knight",
+    "seviyeler": [
+        {
+            "seviye_numarasi": 1,
+            "aciklama": "Baslangic seviyesi",
+            "zorluk": "kolay",
+            "fen": "2k5/8/8/8/8/8/8/7N w - - 0 1",
+            "hedef_kare": "c8",
+            "hamle_sayisi": 4
+        },
+        {
+            "seviye_numarasi": 2,
+            "aciklama": "kolay seviye",
+            "zorluk": "kolay",
+            "fen": "2k5/8/r7/8/8/8/8/7N w - - 0 1",
+            "hedef_kare": "c8",
+            "hamle_sayisi": 4
+        },
+        {
+            "seviye_numarasi": 3,
+            "aciklama": "orta seviye",
+            "zorluk": "orta",
+            "fen": "3k4/2p4b/8/8/8/r7/8/6N2 w - - 0 1",
+            "hedef_kare": "d8",
+            "hamle_sayisi": 5
+        }
+    ]
+}
